@@ -1,0 +1,99 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.softsociety.exam.dao.BoardDAO">
+
+	<!--판매글 저장 -->
+	<insert id="insertBoard" parameterType="Board">
+		insert into market_board
+		(boardnum, memberid, title, contents, category)
+		values
+		(market_board_seq.nextval, #{memberid}, #{title}, #{contents}, #{category})
+	</insert>
+
+	<select id="boardList" resultType="Board">
+		select*from market_board
+		where soldout = 'N'
+		order by boardnum
+	</select>
+
+	<select id="selectBoard" parameterType="integer"
+		resultType="Board">
+		select
+		boardnum
+		, memberid
+		, title
+		, contents
+		, to_char(inputdate, 'YYYY-MM-DD
+		HH24:MI:SS') inputdate
+		, category
+		, soldout
+		, buyerid
+		from
+		market_board
+		where
+		boardnum = #{boardnum}
+	</select>
+
+	<select id="replyList" parameterType="integer"
+		resultType="Reply">
+		select
+		replynum
+		, boardnum
+		, memberid
+		, replytext
+		, to_char(inputdate,
+		'YYYY-MM-DD HH24:MI:SS') inputdate
+		from
+		market_reply
+		where
+		boardnum = #{boardnum}
+		order by
+		replynum
+	</select>
+
+	<delete id="deleteBoard" parameterType="Board">
+		delete
+		from
+		market_board
+		where
+		boardnum = #{boardnum}
+		and memberid = #{memberid}
+	</delete>
+
+	<update id="buyBoard" parameterType="Board">
+		update market_board
+		set buyerid = #{buyerid}, soldout = 'Y'
+		where boardnum = #{boardnum}
+	</update>
+
+	<insert id="writeReply" parameterType="Reply">
+		insert into market_reply
+		(replynum, boardnum, memberid, replytext)
+		values
+		(market_reply_seq.nextval, #{boardnum}, #{memberid}, #{replytext})
+	</insert>
+
+	<select id="category" parameterType="String" resultType="Board">
+		select*from market_board
+		<where>
+			<if test="category == 'all'">
+			</if>
+			<if test="category == 'computer'">
+			category = 'computer'
+			</if>
+			<if test="category == 'car'">
+			category = 'car'
+			</if>
+			<if test="category == 'camera'">
+			category = 'camera'
+			</if>
+		</where>
+	</select>
+	
+	<select id="wordList" parameterType="map" resultType="Board">
+		select*from market_board
+		where title like '%' || #{searchWord} || '%'
+	</select>
+</mapper>

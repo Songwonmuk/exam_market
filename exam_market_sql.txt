@@ -1,0 +1,40 @@
+-- 중고거래 사이트 예제
+
+
+-- 회원정보 테이블
+create table market_member (
+	memberid varchar2(20) primary key,--사용자 아이디
+	memberpw varchar2(100) not null,--암호화된 로그인 비밀번호
+	membername varchar2(20) not null,--사용자 이름
+	phone varchar2(20) not null, -- 전화번호
+	enabled number(1) default 1, -- 계정상태 :1 사용가능,0:사용불가능
+	rolename varchar2(20) default 'ROLE_USER'
+);
+
+-- 판매글 테이블
+create table market_board (
+	boardnum number primary key, -- 글번호
+	memberid varchar2(20) not null, --작성자 아이디
+	title varchar2(200) not null, --제목
+	contents varchar2(2000) not null,-- 상품소개글 내용
+	inputdate date default sysdate, -- 작성일
+	category varchar2(50) check (category in ('computer', 'camera','car')), --상품 분류(computer/camera/car)
+	soldout char(1) default 'N' check (soldout in('N', 'Y')), -- 판매완료여부(판매중:'N',판매완료:'Y')
+	buyerid varchar2(20) -- 구매자 아이디
+);
+
+
+--판매글 일련번호 시퀀스
+create sequence market_board_seq;
+
+-- 리플 테이블
+create table market_reply (
+	replynum number primary key, -- 리플 일련번호
+	boardnum number references market_board(boardnum), --판매글 본문번호
+	memberid varchar2(20) not null, -- 작성자아이디
+	replytext varchar2(500), -- 리플 내용
+	inputdate date default sysdate -- 작성일  
+);
+
+--리플 일련번호 시퀀스
+create sequence market_reply_seq;

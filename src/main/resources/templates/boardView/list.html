@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" 
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>board</title>
+<script>
+</script>
+
+</head>
+<body>
+	<h1><a>[ 판매 정보 게시판 ]</a></h1>
+	<table>
+		<tr>
+			<td style="padding-left:0">
+				<a sec:authorize="isAuthenticated()" th:href="@{/board/write}">판매글 등록</a>
+			</td>
+		</tr>
+		<tr>
+			<th>번호</th>
+			<th style="width:220px;">제목</th>
+			<th>작성자</th>
+		</tr>
+		<tr th:each="board : ${boardlist}">
+			<td th:text="${board.boardnum}"></td>
+			<td>
+				<a th:text="${board.title}" th:href="@{/board/read(boardnum=${board.boardnum})}"></a>
+			</td>
+			<td th:text="${board.memberid}" class="center"></td>
+		</tr>
+	</table>
+	
+</body>
+</html>
